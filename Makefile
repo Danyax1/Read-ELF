@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -O3 -Iinclude
-SRC = src/read_elf.c src/parse_header.c
+SRC = $(wildcard src/*.c)
 TARGET = read_elf
 
 all: read_elf

@@ -5,12 +5,14 @@
 #include <string.h>
 
 #include "parse_header.h"
+#include "elf_section.h"
 
 void print_usage(){
 	printf("Usage: ./read_elf [OPTIONS] <filename>\n");
 	printf("Options:\n");
-	printf("  -h, --header    Display ELF header\n");
-	printf("  -H, --help      Display this help message\n");
+	printf("  -h, --header      Display ELF header\n");
+	printf("  -S, --sections    Display section headers\n");
+	printf("  -H, --help        Display this help message\n");
 }
 
 uint8_t* read_file(const char* filename){
@@ -51,12 +53,16 @@ int main(int argc, char* argv[]){
 	}
 	
 	bool show_header = false;
+	bool show_sections = false;
 	char* filename = NULL;
 	
 	// Parse command line arguments
 	for(int i = 1; i < argc; i++){
 		if(strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--header") == 0){
 			show_header = true;
+		}
+		else if(strcmp(argv[i], "-S") == 0 || strcmp(argv[i], "--sections") == 0){
+			show_sections = true;
 		}
 		else if(strcmp(argv[i], "-H") == 0 || strcmp(argv[i], "--help") == 0){
 			print_usage();
@@ -88,9 +94,11 @@ int main(int argc, char* argv[]){
 	if(show_header){
 		parse_elf_header(elf_file);
 	}
-
+	if(show_sections){
+		unsigned char class = elf_file[EI_CLASS];
+		parse_section_headers(elf_file, class);
+	}
+	
 	free(elf_file);
 	return 0;
-
-
 }
